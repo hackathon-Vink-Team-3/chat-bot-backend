@@ -81,6 +81,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# AUTH_USER_MODEL = "users.CustomUser"  Вписать после создания
+
 
 LANGUAGE_CODE = "ru-RU"
 
