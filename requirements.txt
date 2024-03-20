@@ -1,0 +1,7 @@
+Django==4.2.11
+djangorestframework==3.15.0
+environs==11.0.0
+pytest==8.1.1
+pytest-django==4.8.0
+pytest-lazy-fixtures==1.0.7
+psycopg2-binary==2.9.9
