@@ -21,6 +21,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "src.apps.users",
     "src.apps.api_v1",
+    "src.apps.chat",
 ]
 
 MIDDLEWARE = [
