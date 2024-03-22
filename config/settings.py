@@ -1,7 +1,7 @@
 from pathlib import Path
-import environs
+from environs import Env
 
-env = environs.Env()
+env = Env()
 env.read_env()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -96,7 +96,6 @@ USE_TZ = True
 STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-
 
 try:
     from .local_settings import *
