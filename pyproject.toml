@@ -12,7 +12,7 @@ testpaths = "tests/"
 python_files = "*_test.py *_tests.py test_*.py"
 
 
-[isort]
+[tool.isort]
 profile=black
 src_paths = src
 line_length = 79
