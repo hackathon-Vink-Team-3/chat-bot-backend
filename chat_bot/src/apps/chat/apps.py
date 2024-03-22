@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class ApiV1Config(AppConfig):
+class ChatConfig(AppConfig):
     default_auto_field = "django.db.models.BigAutoField"
-    name = "src.apps.api_v1"
+    name = "chat_bot.src.apps.chat"
