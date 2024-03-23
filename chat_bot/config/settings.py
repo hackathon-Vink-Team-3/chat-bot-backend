@@ -12,6 +12,7 @@ DEBUG = False
 
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS")
 
+# base
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -19,8 +20,19 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+]
+
+# packages
+INSTALLED_APPS += [
+    "rest_framework",
+    "drf_yasg",
+    "corsheaders",
+]
+
+# apps
+INSTALLED_APPS += [
     "src.apps.users",
-    "src.apps.api_v1",
+    "src.apps.api",
     "src.apps.chat",
 ]
 
@@ -32,6 +44,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -96,6 +109,13 @@ USE_TZ = True
 STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+CORS_ORIGIN_ALLOW_ALL = False
+CORS_ORIGIN_WHITELIST = (
+    "http://localhost:8000",
+    # необходимо добавить хост, когда он будет
+)
 
 try:
     from .local_settings import *

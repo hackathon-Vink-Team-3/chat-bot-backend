@@ -6,6 +6,7 @@ exclude = '''
 
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "config.settings"
+pythonpath = ". chat_bot"
 norecursedirs = ["env/*", "venv/*"]
 addopts = "-vv -p no:cacheprovider"
 testpaths = "tests/"
@@ -14,7 +15,7 @@ python_files = "*_test.py *_tests.py test_*.py"
 
 [tool.isort]
 profile = "black"
-src_paths = "src"
+src_paths = "chat_bot.src"
 line_length = 79
 multi_line_output = 0
 include_trailing_comma = true

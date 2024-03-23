@@ -1,0 +1,8 @@
+# ignore all files
+**
+
+# exclusion
+!/config/
+!/src/
+!/manage.py
+!/requirements.txt
