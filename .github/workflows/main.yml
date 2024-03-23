@@ -43,4 +43,4 @@ jobs:
     - name: Run Tests
       run: |
         # pytest
-        python manage.py test
+        python chat-bot/manage.py test
