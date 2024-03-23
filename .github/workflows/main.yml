@@ -43,4 +43,4 @@ jobs:
     - name: Run Tests
       run: |
         # pytest
-        python -m flake8 chat-bot/
+        python -m flake8 chat_bot/
