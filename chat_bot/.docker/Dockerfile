@@ -4,7 +4,7 @@ RUN mkdir /vink_chatbot
 
 WORKDIR /vink_chatbot
 
-COPY requirements.txt .
+COPY ../requirements.txt .
 
 # Для запуска на хостинге
 # RUN apt-get update
@@ -13,6 +13,6 @@ COPY requirements.txt .
 
 RUN pip install -r requirements.txt --no-cache-dir
 
-COPY . .
+COPY ../.. .
 
 RUN chmod a+x /vink_chatbot/scripts/*.sh
