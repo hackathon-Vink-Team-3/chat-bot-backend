@@ -1,3 +1,16 @@
+from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-# Create your models here.
+
+class CustomUser(AbstractUser):
+    """
+    Модель пользователя.
+    """
+    pass
+
+
+class Role(models.Model):
+    """
+    Модель ролей.
+    """
+    pass
