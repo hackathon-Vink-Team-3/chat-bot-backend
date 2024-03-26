@@ -1,4 +1,5 @@
 from pathlib import Path
+
 from environs import Env
 
 env = Env()
@@ -34,6 +35,7 @@ INSTALLED_APPS += [
     "src.apps.users",
     "src.apps.api",
     "src.apps.chat",
+    "src.apps.tg_bot",
 ]
 
 MIDDLEWARE = [
@@ -111,11 +113,29 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
+REST_FRAMEWORK = {
+    "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.AllowAny"],
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.TokenAuthentication",
+    ],
+}
+
+
 CORS_ORIGIN_ALLOW_ALL = False
 CORS_ORIGIN_WHITELIST = (
     "http://localhost:8000",
     # необходимо добавить хост, когда он будет
 )
+
+
+# tg_bot_settings
+BOT_TOKEN = env.str("TG_BOT_TOKEN")
+BOT_COMMANDS = [
+    ("help", "Как пользоваться ботом."),
+    ("feedback", "Обратная связь"),
+]
+WEBHOOK_SECRET = env.str("WEBHOOK_SECRET")
+WEBHOOK_URL = env.str("WEBHOOK_URL")
 
 try:
     from .local_settings import *
