@@ -6,29 +6,26 @@ from telebot import TeleBot
 from telebot.apihelper import ApiTelegramException
 from telebot.types import BotCommandScopeDefault, BotCommand
 
-from src.apps.tg_bot.handlers import start_help, gpt
+from src.apps.tg_bot.handlers import start_help, gpt, feedback
 
-# Количество потоков можно будет отрегулировать
+# TODO Количество потоков можно будет отрегулировать
 bot = TeleBot(token=settings.BOT_TOKEN, parse_mode="HTML", num_threads=10)
 
 
 def register_handlers() -> None:
     """Зарегистрировать обработчики."""
     bot.register_message_handler(
-        start_help.command_start_handler,
-        commands=["start"],
-        pass_bot=True,
+        start_help.command_start_handler, commands=["start"], pass_bot=True
     )
     bot.register_message_handler(
-        start_help.command_help_handler,
-        commands=["help"],
-        pass_bot=True,
+        start_help.command_help_handler, commands=["help"], pass_bot=True
+    )
+    bot.register_message_handler(
+        feedback.feedback_gateway, commands=["feedback"], pass_bot=True
     )
     # Регистрируем всегда последним
     bot.register_message_handler(
-        gpt.gpt_answer,
-        func=lambda message: True,
-        pass_bot=True,
+        gpt.gpt_answer, func=lambda message: True, pass_bot=True
     )
 
 
@@ -57,7 +54,7 @@ def on_startup() -> None:
     set_default_commands(settings.BOT_COMMANDS)
     register_handlers()
     bot.remove_webhook()
-    time.sleep(0.5)
+    time.sleep(0.5)  # Что бы не ловить код 429 при запуске
     bot.set_webhook(
         url=settings.WEBHOOK_URL,
         drop_pending_updates=True,
