@@ -11,30 +11,11 @@ class BotKeyboards:
     """Инлайн и Реплай клавиатуры."""
 
     FEEDBACK_CALLBACK_DATA = CallbackData("value", prefix="feedback")
-    popular_questions = (
-        "Как оформить заказ?",
-        "Какие сроки доставки?",
-        "Минимальная сумма заказа?",
-        "Что подойдет для оклейки машины?",
-        "Почему я?",
-    )
-    assessments = (
-        ("1️⃣", "1"),
-        ("2️⃣", "2"),
-        ("3️⃣", "3"),
-        ("4️⃣", "4"),
-        ("5️⃣", "5"),
-        ("6️⃣", "6"),
-        ("7️⃣", "7"),
-        ("8️⃣", "8"),
-        ("9️⃣", "9"),
-        ("🔟", "10"),
-    )
 
     @classmethod
     def feedback_inline_markup(
         cls,
-        assessments: tuple[tuple] = assessments,
+        assessments: tuple[tuple],
     ) -> InlineKeyboardMarkup:
         """Клавиатура для оценки работы бота."""
         markup = InlineKeyboardMarkup(row_width=5)
@@ -52,7 +33,7 @@ class BotKeyboards:
     @classmethod
     def popular_questions_reply_markup(
         cls,
-        popular_questions: tuple[str] = popular_questions,
+        popular_questions: tuple[str],
     ) -> ReplyKeyboardMarkup:
         """Клавиатура с популярными вопросами."""
         markup = ReplyKeyboardMarkup(
@@ -63,3 +44,11 @@ class BotKeyboards:
         markup.add(*[KeyboardButton(i) for i in popular_questions])
 
         return markup
+
+    @classmethod
+    def cancel_button(cls):
+        button = InlineKeyboardButton(
+            text="❌",
+            callback_data="cancel",
+        )
+        return button
