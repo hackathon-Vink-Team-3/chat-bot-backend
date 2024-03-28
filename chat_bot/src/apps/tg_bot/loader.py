@@ -1,4 +1,5 @@
 import atexit
+import logging
 import time
 
 from django.conf import settings
@@ -6,7 +7,9 @@ from telebot import TeleBot
 from telebot.apihelper import ApiTelegramException
 from telebot.types import BotCommandScopeDefault, BotCommand
 
-from src.apps.tg_bot.handlers import start_help, gpt, feedback
+from src.apps.tg_bot.handlers import base, feedback, gpt
+
+logger = logging.getLogger(__name__)
 
 # TODO Количество потоков можно будет отрегулировать
 bot = TeleBot(token=settings.BOT_TOKEN, parse_mode="HTML", num_threads=10)
@@ -14,19 +17,35 @@ bot = TeleBot(token=settings.BOT_TOKEN, parse_mode="HTML", num_threads=10)
 
 def register_handlers() -> None:
     """Зарегистрировать обработчики."""
+
     bot.register_message_handler(
-        start_help.command_start_handler, commands=["start"], pass_bot=True
+        base.command_start_handler, commands=["start"], pass_bot=True
     )
     bot.register_message_handler(
-        start_help.command_help_handler, commands=["help"], pass_bot=True
+        base.command_help_handler, commands=["help"], pass_bot=True
     )
     bot.register_message_handler(
         feedback.feedback_gateway, commands=["feedback"], pass_bot=True
     )
-    # Регистрируем всегда последним
     bot.register_message_handler(
-        gpt.gpt_answer, func=lambda message: True, pass_bot=True
+        base.cancel_any_state, commands=["cancel"], pass_bot=True
     )
+    bot.register_callback_query_handler(
+        base.cancel_any_state,
+        func=lambda call: call.data == "cancel",
+        pass_bot=True,
+    )
+    # Регистрируем всегда последними
+    bot.register_message_handler(
+        gpt.gpt_answer,
+        func=lambda message: message.content_type == "text",
+        pass_bot=True,
+    )
+    bot.register_message_handler(
+        base.not_text_handler, func=lambda message: True, pass_bot=True
+    )
+
+    logger.debug("Bot handlers are registered.")
 
 
 def set_default_commands(commands: list[tuple[str, str]]) -> None:
@@ -36,6 +55,7 @@ def set_default_commands(commands: list[tuple[str, str]]) -> None:
         commands=commands,
         scope=BotCommandScopeDefault(),
     )
+    logger.debug("The bot commands are set.")
 
 
 @atexit.register
@@ -47,10 +67,12 @@ def on_shutdown() -> None:
         bot.close()
     except ApiTelegramException:
         pass
+    logger.warning("Telegram bot stopped. Webhook removed, commands deleted.")
 
 
 def on_startup() -> None:
     """Подготовка бота перед запуском."""
+    logger.info("Telegram bot starting...")
     set_default_commands(settings.BOT_COMMANDS)
     register_handlers()
     bot.remove_webhook()
@@ -59,4 +81,6 @@ def on_startup() -> None:
         url=settings.WEBHOOK_URL,
         drop_pending_updates=True,
         secret_token=settings.WEBHOOK_SECRET,
+        allowed_updates=["*"],
     )
+    logger.warning("Telegram bot started.")
