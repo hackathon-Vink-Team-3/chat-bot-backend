@@ -51,10 +51,10 @@ def cancel_any_state(call: types.CallbackQuery | types.Message, bot: TeleBot):
     """Сброс любого состояния."""
     bot.delete_state(user_id=call.from_user.id, chat_id=call.from_user.id)
     if isinstance(call, types.Message):
-        bot.send_message(chat_id=call.chat.id, text="Состояние сброшено.")
+        bot.send_message(chat_id=call.chat.id, text=BaseTemplates.STATE_CLEAR)
         bot.delete_message(chat_id=call.chat.id, message_id=call.id)
     else:
-        bot.answer_callback_query(call.id, text="Отмена")
+        bot.answer_callback_query(call.id, text=BaseTemplates.CANCEL_CALLBACK)
         bot.delete_message(
             chat_id=call.message.chat.id,
             message_id=call.message.id,

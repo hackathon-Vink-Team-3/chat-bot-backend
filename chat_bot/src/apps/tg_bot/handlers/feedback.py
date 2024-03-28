@@ -41,7 +41,7 @@ def get_assessment_from_user(call: types.CallbackQuery, bot: TeleBot):
     chat_id = call.message.chat.id
     user_id = call.from_user.id
     bot.edit_message_text(
-        text="Оценка получена.",
+        text=FeedbackTemplates.GET_ASSESSMENT,
         chat_id=chat_id,
         message_id=call.message.id,
         reply_markup=None,
