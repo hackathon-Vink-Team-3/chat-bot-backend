@@ -65,13 +65,13 @@ LOGGING = {
     },
     "handlers": {
         "file": {
-            "level": "WARNING",
+            "level": "WARNING" if DEBUG else "INFO",
             "class": "logging.FileHandler",
             "filename": LOG_PATH,
             "formatter": "json",
         },
         "stream": {
-            "level": "DEBUG",
+            "level": "DEBUG" if DEBUG else "WARNING",
             "class": "logging.StreamHandler",
             "formatter": "console",
         },
@@ -89,6 +89,7 @@ LOGGING = {
         },
     },
 }
+
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
