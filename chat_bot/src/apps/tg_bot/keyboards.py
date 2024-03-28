@@ -10,7 +10,7 @@ from telebot.types import (
 class BotKeyboards:
     """Инлайн и Реплай клавиатуры."""
 
-    FEEDBACK_CALLBACK_DATA = CallbackData("value", prefix="feedback")
+    feedback_call_factory = CallbackData("value", prefix="feedback")
 
     @classmethod
     def feedback_inline_markup(
@@ -23,7 +23,7 @@ class BotKeyboards:
             *[
                 InlineKeyboardButton(
                     text=a[0],
-                    callback_data=cls.FEEDBACK_CALLBACK_DATA.new(value=a[1]),
+                    callback_data=cls.feedback_call_factory.new(value=a[1]),
                 )
                 for a in assessments
             ]
