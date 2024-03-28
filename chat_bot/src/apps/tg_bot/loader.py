@@ -7,17 +7,20 @@ from telebot import TeleBot, StateMemoryStorage, custom_filters
 from telebot.apihelper import ApiTelegramException
 from telebot.types import BotCommandScopeDefault, BotCommand
 
+from src.apps.tg_bot import filters
 from src.apps.tg_bot.handlers import base, feedback, gpt
+from src.apps.tg_bot.keyboards import BotKeyboards
 from src.apps.tg_bot.states import AssessmentsStateGroup
+from src.apps.tg_bot.templates import BOT_COMMANDS
 
 logger = logging.getLogger(__name__)
 
 state_storage = StateMemoryStorage()
-# TODO Количество потоков можно будет отрегулировать
+
 bot = TeleBot(
     token=settings.BOT_TOKEN,
     parse_mode="HTML",
-    num_threads=10,
+    num_threads=10,  # TODO Количество потоков можно будет отрегулировать
     state_storage=state_storage,
 )
 
@@ -40,6 +43,7 @@ def register_handlers() -> None:
     bot.register_callback_query_handler(
         feedback.get_assessment_from_user,
         state=AssessmentsStateGroup.get_assessment,
+        config=BotKeyboards.feedback_call_factory.filter(),
         pass_bot=True,
         func=None,
     )
@@ -64,6 +68,7 @@ def register_handlers() -> None:
 def add_filters():
     """Добавить фильтры."""
     bot.add_custom_filter(custom_filters.StateFilter(bot))
+    bot.add_custom_filter(filters.CustomCallbackFilter())
 
 
 def set_default_commands(commands: list[tuple[str, str]]) -> None:
@@ -91,7 +96,7 @@ def on_shutdown() -> None:
 def on_startup() -> None:
     """Подготовка бота перед запуском."""
     logger.info("Telegram bot starting...")
-    set_default_commands(settings.BOT_COMMANDS)
+    set_default_commands(BOT_COMMANDS)
     register_handlers()
     add_filters()
     bot.remove_webhook()
