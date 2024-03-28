@@ -1,7 +1,8 @@
 import http
-from telebot import types
+
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from telebot import types
 
 from src.apps.tg_bot.loader import bot
 
