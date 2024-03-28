@@ -1,6 +1,7 @@
-class StartHelpTemplates:
+class BaseTemplates:
     START_MESSAGE = "Приветствую, я помощник Vink..."
     HELP_MESSAGE = "Сообщение с инструкцией по использованию..."
+    NOT_TEXT_MESSAGE = "Я могу ответить только на тестовые сообщения."
     POPULAR_QUESTIONS = (
         "Как оформить заказ?",
         "Какие сроки доставки?",
