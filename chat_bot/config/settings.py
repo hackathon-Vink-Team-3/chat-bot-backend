@@ -132,7 +132,8 @@ CORS_ORIGIN_WHITELIST = (
 BOT_TOKEN = env.str("TG_BOT_TOKEN")
 BOT_COMMANDS = [
     ("help", "Как пользоваться ботом."),
-    ("feedback", "Обратная связь"),
+    ("feedback", "Обратная связь."),
+    ("cancel", "Сбросить состояние."),
 ]
 WEBHOOK_SECRET = env.str("WEBHOOK_SECRET")
 WEBHOOK_URL = env.str("WEBHOOK_URL")
