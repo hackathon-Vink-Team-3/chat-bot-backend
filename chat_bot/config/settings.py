@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 
 from environs import Env
@@ -130,11 +131,6 @@ CORS_ORIGIN_WHITELIST = (
 
 # tg_bot_settings
 BOT_TOKEN = env.str("TG_BOT_TOKEN")
-BOT_COMMANDS = [
-    ("help", "Как пользоваться ботом."),
-    ("feedback", "Обратная связь."),
-    ("cancel", "Сбросить состояние."),
-]
 WEBHOOK_SECRET = env.str("WEBHOOK_SECRET")
 WEBHOOK_URL = env.str("WEBHOOK_URL")
 
