@@ -3,16 +3,23 @@ import logging
 import time
 
 from django.conf import settings
-from telebot import TeleBot
+from telebot import TeleBot, StateMemoryStorage, custom_filters
 from telebot.apihelper import ApiTelegramException
 from telebot.types import BotCommandScopeDefault, BotCommand
 
 from src.apps.tg_bot.handlers import base, feedback, gpt
+from src.apps.tg_bot.states import AssessmentsStateGroup
 
 logger = logging.getLogger(__name__)
 
+state_storage = StateMemoryStorage()
 # TODO Количество потоков можно будет отрегулировать
-bot = TeleBot(token=settings.BOT_TOKEN, parse_mode="HTML", num_threads=10)
+bot = TeleBot(
+    token=settings.BOT_TOKEN,
+    parse_mode="HTML",
+    num_threads=10,
+    state_storage=state_storage,
+)
 
 
 def register_handlers() -> None:
@@ -31,6 +38,12 @@ def register_handlers() -> None:
         base.cancel_any_state, commands=["cancel"], pass_bot=True
     )
     bot.register_callback_query_handler(
+        feedback.get_assessment_from_user,
+        state=AssessmentsStateGroup.get_assessment,
+        pass_bot=True,
+        func=None,
+    )
+    bot.register_callback_query_handler(
         base.cancel_any_state,
         func=lambda call: call.data == "cancel",
         pass_bot=True,
@@ -46,6 +59,11 @@ def register_handlers() -> None:
     )
 
     logger.debug("Bot handlers are registered.")
+
+
+def add_filters():
+    """Добавить фильтры."""
+    bot.add_custom_filter(custom_filters.StateFilter(bot))
 
 
 def set_default_commands(commands: list[tuple[str, str]]) -> None:
@@ -75,6 +93,7 @@ def on_startup() -> None:
     logger.info("Telegram bot starting...")
     set_default_commands(settings.BOT_COMMANDS)
     register_handlers()
+    add_filters()
     bot.remove_webhook()
     time.sleep(0.5)  # Что бы не ловить код 429 при запуске
     bot.set_webhook(
