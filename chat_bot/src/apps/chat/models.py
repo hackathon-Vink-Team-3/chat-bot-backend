@@ -8,6 +8,7 @@
 import uuid
 
 from django.contrib.auth import get_user_model
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
 User = get_user_model()
@@ -75,7 +76,16 @@ class Dialog(models.Model):
         verbose_name="Поддержка подключена",
     )
     assessment = models.PositiveSmallIntegerField(
-        max_length=10,
+        validators=(
+            MaxValueValidator(
+                limit_value=10,
+                message=f"Оценка не может быть больше 10.",
+            ),
+            MinValueValidator(
+                limit_value=1,
+                message=f"Не может быть меньше 1.",
+            ),
+        ),
         null=True,
         blank=True,
         verbose_name="Оценка",
@@ -122,6 +132,7 @@ class Message(models.Model):
 
     text = models.TextField(max_length=2000)
     sender_type = models.CharField(
+        max_length=7,
         choices=SenderType.choices,
         verbose_name="Тип отправителя",
     )
