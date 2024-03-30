@@ -48,6 +48,12 @@ def register_handlers() -> None:
         func=None,
     )
     bot.register_callback_query_handler(
+        feedback.save_assessment,
+        state=AssessmentsStateGroup.get_assessment,
+        pass_bot=True,
+        func=lambda call: call.data == "send_assessment",
+    )
+    bot.register_callback_query_handler(
         base.cancel_any_state,
         func=lambda call: call.data == "cancel",
         pass_bot=True,
