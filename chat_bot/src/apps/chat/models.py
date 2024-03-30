@@ -97,7 +97,7 @@ class Dialog(models.Model):
         verbose_name_plural = "Диалоги"
         constraints = [
             models.UniqueConstraint(
-                fields=["is_open", "chat_id"],
+                fields=("is_open", "chat_id"),
                 condition=models.Q(is_open=True),
                 name="unique_is_open_for_chat_id",
             ),
