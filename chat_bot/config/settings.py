@@ -1,4 +1,5 @@
 from pathlib import Path
+
 from environs import Env
 
 env = Env()
@@ -24,6 +25,7 @@ INSTALLED_APPS = [
 
 # packages
 INSTALLED_APPS += [
+    "channels",
     "rest_framework",
     "drf_yasg",
     "corsheaders",
@@ -66,6 +68,14 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "config.wsgi.application"
+ASGI_APPLICATION = "config.asgi.application"
+
+# CHANNEL_LAYERS = {
+#     "default": {
+#         "BACKEND": "channels_redis.core.RedisChannelLayer",
+#         "CONFIG": {"hosts": [("127.0.0.1", 6379)]},
+#     },
+# }
 
 
 DATABASES = {
