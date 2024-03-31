@@ -10,6 +10,7 @@ from telebot.types import BotCommandScopeDefault, BotCommand
 from src.apps.tg_bot import filters
 from src.apps.tg_bot.handlers import base, feedback, gpt
 from src.apps.tg_bot.keyboards import BotKeyboards
+from src.apps.tg_bot.middleware import AuthMiddleware
 from src.apps.tg_bot.states import AssessmentsStateGroup
 from src.apps.tg_bot.templates import BOT_COMMANDS
 
@@ -22,7 +23,13 @@ bot = TeleBot(
     parse_mode="HTML",
     num_threads=10,  # TODO Количество потоков можно будет отрегулировать
     state_storage=state_storage,
+    use_class_middlewares=True,
 )
+
+
+def setup_middleware():
+    """Установить Middleware."""
+    bot.setup_middleware(AuthMiddleware(bot=bot))
 
 
 def register_handlers() -> None:
@@ -104,6 +111,7 @@ def on_startup() -> None:
     logger.info("Telegram bot starting...")
     set_default_commands(BOT_COMMANDS)
     register_handlers()
+    setup_middleware()
     add_filters()
     bot.remove_webhook()
     time.sleep(0.5)  # Что бы не ловить код 429 при запуске
