@@ -12,13 +12,9 @@ logger = logging.getLogger(__name__)
 @log_exceptions(logger)
 def command_start_handler(message: types.Message, bot: TeleBot):
     """Отправить приветствие."""
-    popular_questions = BaseTemplates.get_popular_questions()
     bot.send_message(
         chat_id=message.chat.id,
         text=BaseTemplates.START_MESSAGE,
-        reply_markup=BotKeyboards.popular_questions_reply_markup(
-            popular_questions
-        ),
     )
     logger.debug(f"Telegram bot send start message to {message.from_user.id}")
 
@@ -26,10 +22,14 @@ def command_start_handler(message: types.Message, bot: TeleBot):
 @log_exceptions(logger)
 def command_help_handler(message: types.Message, bot: TeleBot):
     """Отправить инструкцию по использованию."""
+    popular_questions = BaseTemplates.get_popular_questions()
     bot.delete_message(chat_id=message.chat.id, message_id=message.id)
     bot.send_message(
         chat_id=message.chat.id,
         text=BaseTemplates.HELP_MESSAGE,
+        reply_markup=BotKeyboards.popular_questions_reply_markup(
+            popular_questions
+        ),
     )
     logger.debug(f"Telegram bot send help message to {message.from_user.id}")
 
