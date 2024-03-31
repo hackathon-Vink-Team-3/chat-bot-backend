@@ -6,7 +6,7 @@ from src.apps.chat.models import Chat, Dialog, Message
 class DialogSerializer(serializers.ModelSerializer):
     """Сериализатор Диалогов."""
 
-    first_message_text = serializers.SerializerMethodField()
+    first_message_text = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Dialog
@@ -56,4 +56,11 @@ class MessageSerializer(serializers.ModelSerializer):
             "dialog_id",
             "user_id",
         )
-        read_only_fields = ("__all__",)
+        read_only_fields = (
+            "id",
+            "sender_type",
+            "created_date",
+            "chat_id",
+            "dialog_id",
+            "user_id",
+        )
