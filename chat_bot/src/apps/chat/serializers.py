@@ -19,7 +19,13 @@ class DialogSerializer(serializers.ModelSerializer):
             "created_date",
             "chat_id",
         )
-        read_only_fields = ("__all__",)
+        read_only_fields = (
+            "id",
+            "first_message_text",
+            "is_support_connected",
+            "created_date",
+            "chat_id",
+        )
 
     def get_first_message_text(self, obj: Dialog) -> str | None:
         first_message = Message.objects.filter(dialog_id=obj.id).first()
