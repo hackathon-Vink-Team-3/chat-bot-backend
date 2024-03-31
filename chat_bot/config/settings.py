@@ -1,4 +1,6 @@
+import os
 from pathlib import Path
+
 from environs import Env
 
 env = Env()
@@ -35,6 +37,59 @@ INSTALLED_APPS += [
     "src.apps.api",
     "src.apps.chat",
 ]
+
+# logging
+LOG_DIR = os.path.join(BASE_DIR, ".logs")
+LOG_FILE = "/main.log"
+LOG_PATH = LOG_DIR + LOG_FILE
+
+if not os.path.exists(LOG_DIR):
+    os.mkdir(LOG_DIR)
+
+if not os.path.exists(LOG_PATH):
+    f = open(LOG_PATH, "a").close()
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "console": {
+            "format": "[-{levelname}- {asctime}] :: {pathname} :: {module} :: {funcName} :: {message}",  # noqa
+            "style": "{",
+        },
+        "json": {
+            "()": "pythonjsonlogger.jsonlogger.JsonFormatter",  # noqa
+            "format": "{levelname}{asctime}{pathname}{module}{funcName}{message}",  # noqa
+            "style": "{",
+        },
+    },
+    "handlers": {
+        "file": {
+            "level": "WARNING" if DEBUG else "INFO",
+            "class": "logging.FileHandler",
+            "filename": LOG_PATH,
+            "formatter": "json",
+        },
+        "stream": {
+            "level": "DEBUG" if DEBUG else "WARNING",
+            "class": "logging.StreamHandler",
+            "formatter": "console",
+        },
+    },
+    "loggers": {
+        "src.apps.tg_bot": {
+            "handlers": ["file", "stream"],
+            "level": "DEBUG",
+            "propagate": True,
+        },
+        "src.apps.chat": {
+            "handlers": ["file", "stream"],
+            "level": "DEBUG",
+            "propagate": True,
+        },
+    },
+}
+
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
