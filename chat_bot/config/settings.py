@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 
 from environs import Env
@@ -37,7 +38,61 @@ INSTALLED_APPS += [
     "src.apps.users",
     "src.apps.api",
     "src.apps.chat",
+    "src.apps.tg_bot",
 ]
+
+# logging
+LOG_DIR = os.path.join(BASE_DIR, ".logs")
+LOG_FILE = "/main.log"
+LOG_PATH = LOG_DIR + LOG_FILE
+
+if not os.path.exists(LOG_DIR):
+    os.mkdir(LOG_DIR)
+
+if not os.path.exists(LOG_PATH):
+    f = open(LOG_PATH, "a").close()
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "console": {
+            "format": "[-{levelname}- {asctime}] :: {pathname} :: {module} :: {funcName} :: {message}",  # noqa
+            "style": "{",
+        },
+        "json": {
+            "()": "pythonjsonlogger.jsonlogger.JsonFormatter",  # noqa
+            "format": "{levelname}{asctime}{pathname}{module}{funcName}{message}",  # noqa
+            "style": "{",
+        },
+    },
+    "handlers": {
+        "file": {
+            "level": "WARNING" if DEBUG else "INFO",
+            "class": "logging.FileHandler",
+            "filename": LOG_PATH,
+            "formatter": "json",
+        },
+        "stream": {
+            "level": "DEBUG" if DEBUG else "WARNING",
+            "class": "logging.StreamHandler",
+            "formatter": "console",
+        },
+    },
+    "loggers": {
+        "src.apps.tg_bot": {
+            "handlers": ["file", "stream"],
+            "level": "DEBUG",
+            "propagate": True,
+        },
+        "src.apps.chat": {
+            "handlers": ["file", "stream"],
+            "level": "DEBUG",
+            "propagate": True,
+        },
+    },
+}
+
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -99,7 +154,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-# AUTH_USER_MODEL = "users.CustomUser"  Вписать после создания
+AUTH_USER_MODEL = "users.CustomUser"
 
 
 LANGUAGE_CODE = "ru-RU"
@@ -115,11 +170,25 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
+REST_FRAMEWORK = {
+    "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.AllowAny"],
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.TokenAuthentication",
+    ],
+}
+
+
 CORS_ORIGIN_ALLOW_ALL = False
 CORS_ORIGIN_WHITELIST = (
     "http://localhost:8000",
     # необходимо добавить хост, когда он будет
 )
+
+
+# tg_bot_settings
+BOT_TOKEN = env.str("TG_BOT_TOKEN")
+WEBHOOK_SECRET = env.str("WEBHOOK_SECRET")
+WEBHOOK_URL = env.str("WEBHOOK_URL")
 
 try:
     from .local_settings import *
