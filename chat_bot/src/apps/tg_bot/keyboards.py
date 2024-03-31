@@ -54,6 +54,19 @@ class BotKeyboards:
         return markup
 
     @classmethod
+    def get_contact_phone(cls):
+        markup = ReplyKeyboardMarkup(
+            one_time_keyboard=True,
+            resize_keyboard=True,
+        )
+        button = KeyboardButton(
+            "📲Отправить номер телефона.",
+            request_contact=True,
+        )
+        markup.add(button)
+        return markup
+
+    @classmethod
     def cancel_button(cls):
         button = InlineKeyboardButton(
             text="❌",
