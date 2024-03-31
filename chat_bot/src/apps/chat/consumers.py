@@ -14,10 +14,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     async def get_chat_uuid(self):
         """Получить чат UUID"""
-        # path_uuid = self.scope["url_route"]["kwargs"]["chat_uuid"]
+        path_uuid = self.scope["url_route"]["kwargs"]["chat_uuid"]
         pass
 
     def get_serializer(self):
+        """Получить сериализатор."""
         return self.serializer_class
 
     async def save_message(self, message: dict):
@@ -34,4 +35,4 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data=None, bytes_data=None):
         """Получить сообщения."""
         text_data_json = json.loads(text_data)
-        pass  # TODO Вернуть сохраненное сообщение, вернуть ответ от GPT
+        pass  # TODO Вернуть сохраненное сообщение, сохранить вернуть ответ от GPT
