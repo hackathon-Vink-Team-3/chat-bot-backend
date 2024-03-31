@@ -16,6 +16,7 @@ ALLOWED_HOSTS = env.list("ALLOWED_HOSTS")
 
 # base
 INSTALLED_APPS = [
+    "daphne",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -26,6 +27,7 @@ INSTALLED_APPS = [
 
 # packages
 INSTALLED_APPS += [
+    "channels",
     "rest_framework",
     "drf_yasg",
     "corsheaders",
@@ -122,6 +124,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "config.wsgi.application"
+ASGI_APPLICATION = "config.asgi.application"
 
 
 DATABASES = {
