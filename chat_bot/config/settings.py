@@ -190,6 +190,12 @@ BOT_TOKEN = env.str("TG_BOT_TOKEN")
 WEBHOOK_SECRET = env.str("WEBHOOK_SECRET")
 WEBHOOK_URL = env.str("WEBHOOK_URL")
 
+# swagger
+SWAGGER_SETTINGS = {
+    "DEFAULT_AUTO_SCHEMA_CLASS": "src.apps.api.swagger_schema.CustomAutoSchema",
+}
+
+
 try:
     from .local_settings import *
 except ImportError:
