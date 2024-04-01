@@ -36,6 +36,9 @@ class CustomUser(AbstractUser):
         ],
         verbose_name="Номер телефона",
     )
+    telegram_id = models.BigIntegerField(
+        unique=True, null=True, blank=True, verbose_name="Телеграм id"
+    )
 
     class Meta:
         verbose_name = "Пользователь"
