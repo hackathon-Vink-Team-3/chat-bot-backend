@@ -38,7 +38,7 @@ class Chat(models.Model):
         editable=False,
         verbose_name="Дата создания",
     )
-    user_id = models.OneToOneField(
+    user = models.OneToOneField(
         to=User,
         null=True,
         blank=True,
@@ -95,7 +95,7 @@ class Dialog(models.Model):
         editable=False,
         verbose_name="Дата создания",
     )
-    chat_id = models.ForeignKey(
+    chat = models.ForeignKey(
         to=Chat,
         on_delete=models.CASCADE,
         related_name="dialogs",
@@ -107,7 +107,7 @@ class Dialog(models.Model):
         verbose_name_plural = "Диалоги"
         constraints = [
             models.UniqueConstraint(
-                fields=("is_open", "chat_id"),
+                fields=("is_open", "chat"),
                 condition=models.Q(is_open=True),
                 name="unique_is_open_for_chat_id",
             ),
@@ -141,19 +141,19 @@ class Message(models.Model):
         editable=False,
         verbose_name="Дата создания",
     )
-    chat_id = models.ForeignKey(
+    chat = models.ForeignKey(
         to=Chat,
         on_delete=models.CASCADE,
         related_name="messages",
         verbose_name="Чат",
     )
-    dialog_id = models.ForeignKey(
+    dialog = models.ForeignKey(
         to=Dialog,
         on_delete=models.CASCADE,
         related_name="messages",
         verbose_name="Диалог",
     )
-    user_id = models.ForeignKey(
+    user = models.ForeignKey(
         to=User,
         on_delete=models.SET_NULL,
         related_name="messages",
