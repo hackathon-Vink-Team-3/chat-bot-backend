@@ -10,7 +10,7 @@ from telebot.types import BotCommandScopeDefault, BotCommand
 from src.apps.tg_bot import filters
 from src.apps.tg_bot.handlers import base, feedback, gpt
 from src.apps.tg_bot.keyboards import BotKeyboards
-from src.apps.tg_bot.middleware import AuthMiddleware
+from src.apps.tg_bot.middleware import AuthMiddleware, ChatDialogMiddleware
 from src.apps.tg_bot.states import AssessmentsStateGroup
 from src.apps.tg_bot.templates import BOT_COMMANDS
 
@@ -30,6 +30,7 @@ bot = TeleBot(
 def setup_middleware():
     """Установить Middleware."""
     bot.setup_middleware(AuthMiddleware(bot=bot))
+    bot.setup_middleware(ChatDialogMiddleware(bot=bot))
 
 
 def register_handlers() -> None:
