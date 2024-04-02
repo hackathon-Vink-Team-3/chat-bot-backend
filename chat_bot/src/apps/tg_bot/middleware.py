@@ -50,7 +50,7 @@ class AuthMiddleware(BaseMiddleware):
                 user.save()
                 self.bot.send_message(
                     chat_id=message.chat.id,
-                    text="Ваш телеграм аккаунт успешно привязан.",
+                    text="✅ Ваш телеграм аккаунт успешно привязан.",
                     reply_markup=types.ReplyKeyboardRemove(),
                 )
                 logger.info("The user linked the telegram account.")
