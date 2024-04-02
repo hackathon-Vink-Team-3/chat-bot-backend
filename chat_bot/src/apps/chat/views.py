@@ -78,10 +78,10 @@ class DialogViewSet(
         return Dialog.objects.filter(chat_id=self.kwargs.get("chat_uuid"))
 
     def get_serializer_class(self):
-        if self.action == "retrieve":
-            return DialogDetailSerializer
-        else:
+        if self.action == "list":
             return DialogListSerializer
+        else:
+            return DialogDetailSerializer
 
     def create(self, request, *args, **kwargs):
         """
