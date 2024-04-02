@@ -1,3 +1,5 @@
+import random
+import string
 from functools import wraps
 
 
@@ -15,3 +17,10 @@ def log_exceptions(logger):
         return wrapper
 
     return decorator
+
+
+def generate_random_password():
+    """Сгенерировать временный пароль."""
+    characters = string.ascii_letters + string.digits
+    password = "".join(random.choice(characters) for _ in range(10))
+    return password
