@@ -2,6 +2,7 @@ import logging
 
 from telebot import types, TeleBot
 
+from src.apps.chat.models import Dialog
 from src.apps.tg_bot.keyboards import BotKeyboards
 from src.apps.tg_bot.states import AssessmentsStateGroup
 from src.apps.tg_bot.templates import FeedbackTemplates
@@ -65,15 +66,14 @@ def get_assessment_from_user(call: types.CallbackQuery, bot: TeleBot):
 
 
 @log_exceptions(logger)
-def save_assessment(call: types.CallbackQuery, bot: TeleBot):
+def save_assessment(call: types.CallbackQuery, bot: TeleBot, dialog: Dialog):
     """Сохранить оценку пользователя."""
     chat_id = call.message.chat.id
     user_id = call.from_user.id
     with bot.retrieve_data(user_id=user_id, chat_id=chat_id) as data:
         data_assessment = data.get("feedback")
-
-    # TODO занести в базу оценку от пользователя.
-
+    dialog.assessment = data_assessment
+    dialog.save()
     bot.edit_message_text(
         text=FeedbackTemplates.GET_ASSESSMENT.format(data_assessment),
         chat_id=chat_id,
