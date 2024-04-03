@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.core.validators import RegexValidator
@@ -15,7 +16,7 @@ class CustomUser(AbstractUser):
     username_validator = UnicodeUsernameValidator()
 
     username = models.CharField(
-        max_length=150,
+        max_length=settings.MAX_LEN_USERNAME,
         unique=True,
         validators=[username_validator],
         error_messages={
@@ -26,7 +27,7 @@ class CustomUser(AbstractUser):
         verbose_name="username",
     )
     phone_number = models.CharField(
-        max_length=12,
+        max_length=settings.MAX_LEN_PHONE_NUMBER,
         unique=True,
         validators=[
             RegexValidator(
