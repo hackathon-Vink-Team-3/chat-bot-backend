@@ -18,6 +18,7 @@ class AuthMiddleware(BaseMiddleware):
         self.bot = bot
 
     def pre_process(self, message: types.Message, data):
+        """Обработка входящего апдейта."""
         user_exists = CustomUser.objects.filter(
             telegram_id=message.from_user.id
         ).exists()
@@ -25,11 +26,12 @@ class AuthMiddleware(BaseMiddleware):
             return
         if not user_exists:
             self.registration_gateway(message)
-            logger.debug("Update from an unregistered user has been rejected.")
+            logger.info("Update from an unregistered user has been rejected.")
             return CancelUpdate()
 
     @log_exceptions(logger)
     def registration_gateway(self, message: types.Message):
+        """Вход в состояние регистрации."""
         contact_message = self.bot.send_message(
             chat_id=message.chat.id,
             text=BaseTemplates.SEND_NUMBER,
@@ -39,6 +41,7 @@ class AuthMiddleware(BaseMiddleware):
 
     @log_exceptions(logger)
     def create_user(self, message: types.Message):
+        """Создать пользователя или привязать к веб аккаунту."""
         if message.contact:
             phone_number = message.contact.phone_number
 
@@ -83,6 +86,7 @@ class AuthMiddleware(BaseMiddleware):
             )
             return CancelUpdate()
 
+    @log_exceptions(logger)
     def create_chat_and_dialog(self, user: CustomUser):
         """Создать диалог и чат."""
         chat = Chat.objects.filter(user=user).first()
@@ -101,6 +105,7 @@ class ChatDialogMiddleware(BaseMiddleware):
 
     @log_exceptions(logger)
     def pre_process(self, upd: types.Message | types.CallbackQuery, data):
+        """Обработка входящего апдейта."""
         if isinstance(upd, types.Message) and upd.text in [
             ["/start", "/help"]
         ]:

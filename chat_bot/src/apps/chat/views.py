@@ -39,6 +39,7 @@ class ChatViewSet(mixins.CreateModelMixin, GenericViewSet):
             return Response(
                 self.serializer_class(instance=chat).data,
                 status=status.HTTP_200_OK,
+                headers={"access-control-allow-credentials": "true"},
             )
         chat_uuid = request.session.get("chat_uuid")
         chat = Chat.objects.filter(id=chat_uuid).first()
@@ -46,6 +47,7 @@ class ChatViewSet(mixins.CreateModelMixin, GenericViewSet):
             return Response(
                 self.serializer_class(instance=chat).data,
                 status=status.HTTP_200_OK,
+                headers={"access-control-allow-credentials": "true"},
             )
         else:
             serializer = self.serializer_class(
@@ -57,6 +59,7 @@ class ChatViewSet(mixins.CreateModelMixin, GenericViewSet):
             return Response(
                 serializer.data,
                 status=status.HTTP_201_CREATED,
+                headers={"access-control-allow-credentials": "true"},
             )
 
 
@@ -69,7 +72,7 @@ class DialogViewSet(
 ):
     """Диалоги."""
 
-    http_method_names = ["get", "post", "patch"]
+    http_method_names = ["get", "post", "patch", "options"]
     swagger_tags = ["DIALOG"]
 
     def get_queryset(self):

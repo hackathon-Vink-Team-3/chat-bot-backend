@@ -30,6 +30,7 @@ def gpt_answer(
         sender_type="user",
     )
     logger.debug("Telegram bot saved message. Sender type: user")
+    bot.send_chat_action(chat_id=message.chat.id, action="typing", timeout=3)
 
     sleep(3)  # TODO УБРАТЬ ПОСЛЕ ПОДКЛЮЧЕНИЯ GPT!
     gpt_answer_message = (

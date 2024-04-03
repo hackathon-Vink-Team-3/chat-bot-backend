@@ -7,6 +7,7 @@
 
 import uuid
 
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
@@ -78,12 +79,14 @@ class Dialog(models.Model):
     assessment = models.PositiveSmallIntegerField(
         validators=(
             MaxValueValidator(
-                limit_value=10,
-                message=f"Оценка не может быть больше 10.",
+                limit_value=settings.ASSESSMENT_MAX_VALUE,
+                message="Оценка не может быть больше "
+                f"{settings.ASSESSMENT_MAX_VALUE}.",
             ),
             MinValueValidator(
-                limit_value=1,
-                message=f"Не может быть меньше 1.",
+                limit_value=settings.ASSESSMENT_MIN_VALUE,
+                message="Не может быть меньше "
+                f"{settings.ASSESSMENT_MIN_VALUE}.",
             ),
         ),
         null=True,
@@ -130,9 +133,9 @@ class Message(models.Model):
         BOT = "bot", "bot"
         SUPPORT = "support", "support"
 
-    text = models.TextField(max_length=2000)
+    text = models.TextField(max_length=settings.MAX_LEN_MESSAGE_TEXT_FIELD)
     sender_type = models.CharField(
-        max_length=7,
+        max_length=settings.MAX_LEN_SENDER_TYPE,
         choices=SenderType.choices,
         verbose_name="Тип отправителя",
     )
