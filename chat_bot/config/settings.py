@@ -173,22 +173,35 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.AllowAny"],
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework.authentication.TokenAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
     ],
 }
 
 
-CORS_ORIGIN_ALLOW_ALL = False
-CORS_ORIGIN_WHITELIST = (
-    "http://localhost:8000",
-    # необходимо добавить хост, когда он будет
-)
+CORS_ORIGIN_ALLOW_ALL = True  # Изменить на проде
+CORS_ALLOW_CREDENTIALS = True
+SESSION_COOKIE_SAMESITE = None
+CORS_ALLOWED_ORIGINS = env.list("CORS_ALLOWED_ORIGINS")
 
 
 # tg_bot_settings
 BOT_TOKEN = env.str("TG_BOT_TOKEN")
 WEBHOOK_SECRET = env.str("WEBHOOK_SECRET")
 WEBHOOK_URL = env.str("WEBHOOK_URL")
+
+# swagger
+SWAGGER_SETTINGS = {
+    "DEFAULT_AUTO_SCHEMA_CLASS": "src.apps.api.swagger_schema.CustomAutoSchema",
+}
+
+# constants
+MAX_LEN_MESSAGE_TEXT_FIELD = 2000
+ASSESSMENT_MAX_VALUE = 10
+ASSESSMENT_MIN_VALUE = 1
+MAX_LEN_SENDER_TYPE = 7
+MAX_LEN_PHONE_NUMBER = 12
+MAX_LEN_USERNAME = 150
+
 
 try:
     from .local_settings import *
