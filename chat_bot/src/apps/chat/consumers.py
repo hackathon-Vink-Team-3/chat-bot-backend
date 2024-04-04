@@ -45,6 +45,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def send_error(self, error_message) -> None:
         """Отправить сообщение об ошибке."""
         await self.send(text_data=json.dumps({"error": error_message}))
+        return await self.close()
 
     async def parse_received_data(self, text_data: str) -> str | None:
         """Обработать полученные данные."""
@@ -90,17 +91,21 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data=None, bytes_data=None) -> None:
         """Получить и отправить сообщения."""
         message_text: str = await self.parse_received_data(text_data)
+        if not message_text:
+            return await self.close()
         message_to_gpt, message = await self.save_message(
             message_text,
             sender_type="user",
         )
-        if message_to_gpt and message:
-            await self.send(message)
-            logger.info("The saved message has been sent.")
-            gpt_answer = await self.get_gpt_answer(message_to_gpt)
-            saved_gpt_answer: str = await self.save_message(
-                gpt_answer, sender_type="bot"
-            )
-            if saved_gpt_answer:
-                await self.send(saved_gpt_answer)
-                logger.info("The saved bot answer has been sent.")
+        if not message_to_gpt or not message:
+            return await self.close()
+        await self.send(message)
+        logger.info("The saved message has been sent.")
+        gpt_answer = await self.get_gpt_answer(message_to_gpt)
+        saved_gpt_answer: str = await self.save_message(
+            gpt_answer, sender_type="bot"
+        )
+        if not saved_gpt_answer:
+            return await self.close()
+        await self.send(saved_gpt_answer)
+        logger.info("The saved bot answer has been sent.")
