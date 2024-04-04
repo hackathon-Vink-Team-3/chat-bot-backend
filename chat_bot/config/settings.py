@@ -178,17 +178,10 @@ REST_FRAMEWORK = {
 }
 
 
-CORS_ORIGIN_ALLOW_ALL = True
+CORS_ORIGIN_ALLOW_ALL = True  # Изменить на проде
 CORS_ALLOW_CREDENTIALS = True
-CORS_ORIGIN_WHITELIST = (
-    "http://localhost:8000",
-    # необходимо добавить хост, когда он будет
-)
 SESSION_COOKIE_SAMESITE = None
-CORS_ALLOW_HEADERS = (
-    "access-control-allow-headers",
-    "access-control-allow-credentials",
-)
+CORS_ALLOWED_ORIGINS = env.list("CORS_ALLOWED_ORIGINS")
 
 
 # tg_bot_settings
