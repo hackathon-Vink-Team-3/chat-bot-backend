@@ -1,4 +1,6 @@
+from django.core.exceptions import ValidationError
 from rest_framework import status, mixins
+from rest_framework.exceptions import ValidationError as DRFValidationError
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
@@ -11,7 +13,11 @@ from src.apps.chat.serializers import (
 from src.apps.users.models import CustomUser
 
 
-class ChatViewSet(mixins.CreateModelMixin, GenericViewSet):
+class ChatViewSet(
+    mixins.CreateModelMixin,
+    mixins.RetrieveModelMixin,
+    GenericViewSet,
+):
     """Чаты."""
 
     serializer_class = ChatSerializer
@@ -39,15 +45,13 @@ class ChatViewSet(mixins.CreateModelMixin, GenericViewSet):
             return Response(
                 self.serializer_class(instance=chat).data,
                 status=status.HTTP_200_OK,
-                headers={"access-control-allow-credentials": "true"},
             )
-        chat_uuid = request.session.get("chat_uuid")
+        chat_uuid = request.session.get("chat_uuid")  # Не реализовано
         chat = Chat.objects.filter(id=chat_uuid).first()
         if chat:
             return Response(
                 self.serializer_class(instance=chat).data,
                 status=status.HTTP_200_OK,
-                headers={"access-control-allow-credentials": "true"},
             )
         else:
             serializer = self.serializer_class(
@@ -59,7 +63,6 @@ class ChatViewSet(mixins.CreateModelMixin, GenericViewSet):
             return Response(
                 serializer.data,
                 status=status.HTTP_201_CREATED,
-                headers={"access-control-allow-credentials": "true"},
             )
 
 
@@ -78,7 +81,10 @@ class DialogViewSet(
     def get_queryset(self):
         if getattr(self, "swagger_fake_view", False):
             return Dialog.objects.none()
-        return Dialog.objects.filter(chat_id=self.kwargs.get("chat_uuid"))
+        try:
+            return Dialog.objects.filter(chat_id=self.kwargs.get("chat_uuid"))
+        except ValidationError:
+            raise DRFValidationError("Invalid chat UUID.")
 
     def get_serializer_class(self):
         if self.action == "list":
