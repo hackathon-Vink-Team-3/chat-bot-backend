@@ -10,8 +10,8 @@ from aiohttp import (
     ClientResponse as AsyncResponse,
 )
 from django.conf import settings
-from redis import Redis
-from redis.asyncio import Redis as aRedis
+from redis import Redis, ConnectionPool
+from redis.asyncio import Redis as aRedis, ConnectionPool as AConnectionPool
 from requests import Response as SyncResponse, JSONDecodeError
 
 logger = logging.getLogger(__name__)
@@ -61,8 +61,13 @@ class YaGptRequests:
         Зависит от параметра: async_request
         """
         if self.async_requests:
-            return aRedis(host=self.redis_host)
-        return Redis(host=self.redis_host)
+            con_pool = AConnectionPool()
+            return aRedis(
+                host=self.redis_host,
+                connection_pool=con_pool,
+            )
+        con_pool = ConnectionPool()
+        return Redis(host=self.redis_host, connection_pool=con_pool)
 
     def __headers(self):
         return {
