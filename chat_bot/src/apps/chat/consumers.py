@@ -7,6 +7,7 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 
 from src.apps.chat.models import Message, Dialog
 from src.apps.chat.serializers import MessageSerializer
+from src.apps.core import YaGptRequests
 
 logger = logging.getLogger(__name__)
 
@@ -16,6 +17,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     serializer_class = MessageSerializer
     queryset = Message.objects.all()
+    gpt_model = YaGptRequests(async_request=True)
 
     def get_path_kwargs(self) -> tuple[str, str]:
         """Получить параметры пути."""
@@ -35,10 +37,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     async def get_gpt_answer(self, message: str) -> str:
         """Получить ответ от GPT модели."""
-
-        # TODO Отправляем на обработку модели(message)
-
-        gpt_answer = "VINK скрывают что я бот, помогите!"
+        chat_uuid, _ = self.get_path_kwargs()
+        gpt_answer = await self.gpt_model.arequest(
+            message=message,
+            chat_uuid=chat_uuid,
+        )
+        await self.save_message(message_text=gpt_answer, sender_type="bot")
         logger.info("The response from GPT has been received.")
         return gpt_answer
 
