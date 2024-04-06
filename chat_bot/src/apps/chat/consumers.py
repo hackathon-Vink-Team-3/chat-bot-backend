@@ -8,6 +8,7 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from src.apps.chat.models import Message, Dialog
 from src.apps.chat.serializers import MessageSerializer
 from src.apps.core import YaGptRequests
+from src.base.utils import get_model_config
 
 logger = logging.getLogger(__name__)
 
@@ -17,7 +18,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     serializer_class = MessageSerializer
     queryset = Message.objects.all()
-    gpt_model = YaGptRequests(async_request=True)
+    gpt_model = YaGptRequests(async_request=True, config=get_model_config())
 
     def get_path_kwargs(self) -> tuple[str, str]:
         """Получить параметры пути."""
