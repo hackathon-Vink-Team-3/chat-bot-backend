@@ -1,11 +1,11 @@
 import logging
-from time import sleep
 
 from telebot import types, TeleBot
 
 from src.apps.chat.models import Dialog, Chat, Message
+from src.apps.core import YaGptRequests
 from src.apps.users.models import CustomUser
-from src.base.utils import log_exceptions
+from src.base.utils import log_exceptions, get_model_config
 
 logger = logging.getLogger(__name__)
 
@@ -31,12 +31,13 @@ def gpt_answer(
     )
     logger.debug("Telegram bot saved message. Sender type: user")
     bot.send_chat_action(chat_id=message.chat.id, action="typing", timeout=3)
-
-    sleep(3)  # TODO УБРАТЬ ПОСЛЕ ПОДКЛЮЧЕНИЯ GPT!
-    gpt_answer_message = (
-        "Тут будет очень точный ответ, который точно вам поможет."
+    gpt_answer_message = YaGptRequests(
+        async_request=False,
+        config=get_model_config(),
+    ).request(
+        message=message.text,
+        chat_uuid=str(chat.id),
     )
-
     Message.objects.create(
         chat=chat,
         dialog=dialog,
@@ -49,5 +50,3 @@ def gpt_answer(
         message_id=wait_message.id,
         text=gpt_answer_message,
     )
-
-    # TODO как хранить контекст? Как сбрасывать контекст(по кнопке?)?

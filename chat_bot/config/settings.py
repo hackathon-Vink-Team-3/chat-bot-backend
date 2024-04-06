@@ -39,6 +39,7 @@ INSTALLED_APPS += [
     "src.apps.api",
     "src.apps.chat",
     "src.apps.tg_bot",
+    "src.apps.core",
 ]
 
 # logging
@@ -86,6 +87,11 @@ LOGGING = {
             "propagate": True,
         },
         "src.apps.chat": {
+            "handlers": ["file", "stream"],
+            "level": "DEBUG",
+            "propagate": True,
+        },
+        "src.apps.core": {
             "handlers": ["file", "stream"],
             "level": "DEBUG",
             "propagate": True,
@@ -201,6 +207,13 @@ ASSESSMENT_MIN_VALUE = 1
 MAX_LEN_SENDER_TYPE = 7
 MAX_LEN_PHONE_NUMBER = 12
 MAX_LEN_USERNAME = 150
+
+# redis
+REDIS_HOST = env.str("REDIS_HOST")
+
+# yagpt
+YA_API_URL = env.str("YA_API_URL")
+MODEL_API_KEY = env.str("MODEL_API_KEY")
 
 
 try:
