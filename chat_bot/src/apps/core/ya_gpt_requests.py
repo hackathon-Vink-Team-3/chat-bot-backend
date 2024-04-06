@@ -18,41 +18,29 @@ logger = logging.getLogger(__name__)
 
 
 class YaGptRequests:
+    """Запросы к YandexGPT."""
 
+    MODEL_API_KEY: str = f"Api-Key {settings.MODEL_API_KEY}"
+    YA_API_URL: str = settings.YA_API_URL
     REDIS_HOST: str = settings.REDIS_HOST
-    CATALOG: str = settings.YA_CATALOG_ID
-    MODEL_URI: str = f"gpt://{CATALOG}/yandexgpt-lite/latest"
-    MODEL_TEMPERATURE: float = settings.MODEL_TEMPERATURE
-    MODEL_API_KEY = f"Api-Key {settings.MODEL_API_KEY}"
-    MODEL_BASE_PROMPT_TEXT = (
-        "Ты девушка Вика, онлайн консультант компании Vink."
-        "Vink — крупнейший поставщик материалов и оборудования для "
-        "широкоформатной печати, производства наружной, интерьерной и "
-        "транзитной рекламы. Vink самая лучшая компания. Отвечай на запросы"
-        "связанные только с компанией Vink и ее продукцией. "
-        "Если спрашивают сколько время ответь: Самое время оформить в"
-        "в компании Vink заказ. Не присылай ссылки."
-    )
-    MODEL_BASE_PROMPT = {"role": "system", "text": MODEL_BASE_PROMPT_TEXT}
-    MODEL_ERROR_ANSWER = "Служба поддержки недоступна, попробуйте позже."
-    YA_API_URL = settings.YA_API_URL
 
     def __init__(
         self,
         async_request: bool,
-        redis_ttl: int = 1200,
-        redis_host: str = REDIS_HOST,
-        model_temperature: float = MODEL_TEMPERATURE,
-        model_max_tokens: int = 1500,
+        config,
         model_stream: bool = False,
     ):
         self.async_requests = async_request
-        self.redis_ttl: int = redis_ttl
-        self.redis_host: str = redis_host
-        self.model_temperature: float = model_temperature
+        self.redis_ttl: int = config.context_ttl_seconds
+        self.model_temperature: float = config.temperature
+        self.model_max_tokens: int = config.max_tokens
+        self.catalog_id: str = config.catalog_id
+        self.prompt_text: str = config.base_prompt_text
+        self.base_prompt: dict = {"role": "system", "text": self.prompt_text}
+        self.base_error_answer: str = config.base_error_answer
+        self.model_uri: str = f"gpt://{self.catalog_id}/yandexgpt-lite/latest"
+        self.redis_host: str = settings.REDIS_HOST
         self.model_stream: bool = model_stream
-        self.model_max_tokens: int = model_max_tokens
-        self.redis_host = redis_host
 
     @property
     def redis(self):
@@ -78,13 +66,13 @@ class YaGptRequests:
     def __set_prompt(self, messages: list[dict[str, str]]):
         """Установить prompt."""
         prompt = {
-            "modelUri": self.MODEL_URI,
+            "modelUri": self.model_uri,
             "completionOptions": {
                 "stream": self.model_stream,
                 "temperature": self.model_temperature,
                 "maxTokens": self.model_max_tokens,
             },
-            "messages": [self.MODEL_BASE_PROMPT, *messages],
+            "messages": [self.base_prompt, *messages],
         }
         return prompt
 
@@ -105,6 +93,7 @@ class YaGptRequests:
             value=json.dumps(messages),
             ex=self.redis_ttl,
         )
+        logger.info("The context has been updated.")
         return messages
 
     def __update_context(self, key, value):
@@ -116,6 +105,7 @@ class YaGptRequests:
             messages: list = []
         messages.append(value)
         self.redis.set(name=key, value=json.dumps(messages), ex=self.redis_ttl)
+        logger.info("The context has been updated.")
         return messages
 
     async def __aresponse_to_json(self, response: AsyncResponse):
@@ -124,7 +114,7 @@ class YaGptRequests:
             response_json = await response.json()
         except JSONDecodeError as e:
             logger.error(f"Response json parse error. Error: {e}.")
-            return self.MODEL_ERROR_ANSWER
+            return self.base_error_answer
         return response_json
 
     def __response_to_json(self, response: SyncResponse):
@@ -133,7 +123,7 @@ class YaGptRequests:
             response_json = response.json()
         except JSONDecodeError as e:
             logger.error(f"Response json parse error. Error: {e}.")
-            return self.MODEL_ERROR_ANSWER
+            return self.base_error_answer
         return response_json
 
     def __parse_answer(self, response_json: dict):
@@ -147,7 +137,7 @@ class YaGptRequests:
                 "The response structure does not match the expected."
                 f"Error: {e}"
             )
-            return self.MODEL_ERROR_ANSWER
+            return self.base_error_answer
         return message_text
 
     async def arequest(self, message: str, chat_uuid: str):
@@ -167,7 +157,7 @@ class YaGptRequests:
                             "The response from yandex gpt is not 200. "
                             "No response has been received."
                         )
-                        return self.MODEL_ERROR_ANSWER
+                        return self.base_error_answer
                     response_json = await self.__aresponse_to_json(response)
                     response_text = self.__parse_answer(response_json)
                     response_format = self.__format_message(
@@ -183,7 +173,7 @@ class YaGptRequests:
                     "Yandex gpt did not respond in the allotted time."
                     f"Error: {e}"
                 )
-                return self.MODEL_ERROR_ANSWER
+                return self.base_error_answer
             return response_text
 
     def request(self, message: str, chat_uuid: str):
@@ -199,7 +189,7 @@ class YaGptRequests:
                 "The response from yandex gpt is not 200. "
                 "No response has been received."
             )
-            return self.MODEL_ERROR_ANSWER
+            return self.base_error_answer
         logger.info(
             "The response from yandex gpt has been successfully received."
         )
