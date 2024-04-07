@@ -16,6 +16,7 @@ from src.apps.chat import routing
 
 application = ProtocolTypeRouter(
     {
+        "http": django_asgi_app,
         "websocket": SessionMiddlewareStack(
             URLRouter(routing.websocket_urlpatterns),
         ),
