@@ -82,9 +82,12 @@ class DialogViewSet(
         if getattr(self, "swagger_fake_view", False):
             return Dialog.objects.none()
         try:
-            return Dialog.objects.filter(chat_id=self.kwargs.get("chat_uuid"))
+            chat_uuid = self.kwargs.get("chat_uuid")
+            if Chat.objects.filter(id=chat_uuid):
+                return Dialog.objects.filter(chat_id=chat_uuid)
         except ValidationError:
             raise DRFValidationError("Invalid chat UUID.")
+        raise DRFValidationError("Invalid chat UUID.")
 
     def get_serializer_class(self):
         if self.action == "list":
@@ -100,7 +103,7 @@ class DialogViewSet(
         """
         chat_uuid = kwargs["chat_uuid"]
         open_dialog = (
-            self.get_queryset().filter(chat_id=chat_uuid, is_open=True).first()
+            self.get_queryset().first() if self.get_queryset() else None
         )
         serializer = self.get_serializer_class()
         if open_dialog:

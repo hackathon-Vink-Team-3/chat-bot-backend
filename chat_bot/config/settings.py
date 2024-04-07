@@ -69,13 +69,13 @@ LOGGING = {
     },
     "handlers": {
         "file": {
-            "level": "WARNING" if DEBUG else "INFO",
+            "level": "INFO",
             "class": "logging.FileHandler",
             "filename": LOG_PATH,
             "formatter": "json",
         },
         "stream": {
-            "level": "DEBUG" if DEBUG else "WARNING",
+            "level": "DEBUG",
             "class": "logging.StreamHandler",
             "formatter": "console",
         },
@@ -95,6 +95,10 @@ LOGGING = {
             "handlers": ["file", "stream"],
             "level": "DEBUG",
             "propagate": True,
+        },
+        "daphne": {
+            "handlers": ["file", "stream"],
+            "level": "DEBUG",
         },
     },
 }
@@ -172,6 +176,10 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = "static/"
+STATIC_ROOT = BASE_DIR / "static"
+
+MEDIA_URL = "/media/"
+MEDIA_ROOT = "/media"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
