@@ -1,8 +1,10 @@
-# ignore all files
-**
-
-# exclusion
-!/config/
-!/src/
-!/manage.py
-!/requirements.txt
+venv
+.git
+db.sqlite3 
+.env
+.env.prod
+.idea
+.logs
+.vscode
+*/local_settings.py
+*/.DS_Store
