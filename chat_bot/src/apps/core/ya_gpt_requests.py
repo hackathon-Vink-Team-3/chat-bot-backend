@@ -49,9 +49,9 @@ class YaGptRequests:
         Зависит от параметра: async_request
         """
         if self.async_requests:
-            con_pool = aConnectionPool(host=self.redis_host, port=6379, db=1)
+            con_pool = aConnectionPool(host=self.redis_host, port=6379)
             return aRedis(host=self.redis_host, connection_pool=con_pool)
-        con_pool = ConnectionPool(host=self.redis_host, port=6379, db=1)
+        con_pool = ConnectionPool(host=self.redis_host, port=6379)
         return Redis(connection_pool=con_pool)
 
     def __headers(self):
