@@ -19,8 +19,7 @@
 - _[Postgresql 15](https://hub.docker.com/_/postgres)_  Docker-образ
 - _[Docker and docker-compose](https://www.docker.com/get-started/)_
 - _[YandexGPT](https://cloud.yandex.ru/ru/docs/yandexgpt/quickstart#console_1)_
-- _[Telegram Bot API]()_
-- _[WhatsApp Business API]()_
+- _[pyTelegramBotAPI]()_
 
 ### Быстрый старт.
 * В терминале (командной строке):
