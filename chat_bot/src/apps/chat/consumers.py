@@ -43,7 +43,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
             message=message,
             chat_uuid=chat_uuid,
         )
-        await self.save_message(message_text=gpt_answer, sender_type="bot")
         logger.info("The response from GPT has been received.")
         return gpt_answer
 
