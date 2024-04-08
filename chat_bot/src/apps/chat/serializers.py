@@ -76,7 +76,7 @@ class DialogListSerializer(serializers.ModelSerializer):
         )
 
     def get_first_message_text(self, obj: Dialog) -> str | None:
-        first_message = Message.objects.filter(dialog_id=obj.id).first()
+        first_message = Message.objects.filter(dialog_id=obj.id).last()
         return first_message.text if first_message else None
 
     def create(self, validated_data):
