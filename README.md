@@ -19,8 +19,7 @@
 - _[Postgresql 15](https://hub.docker.com/_/postgres)_  Docker-образ
 - _[Docker and docker-compose](https://www.docker.com/get-started/)_
 - _[YandexGPT](https://cloud.yandex.ru/ru/docs/yandexgpt/quickstart#console_1)_
-- _[Telegram Bot API]()_
-- _[WhatsApp Business API]()_
+- _[pyTelegramBotAPI]()_
 
 ### Быстрый старт.
 * В терминале (командной строке):
@@ -36,7 +35,7 @@
 * Выполнить команду `docker compose up`
 
 
-### Инструкция по запуска backend'a.
+### Инструкция по запуску в dev режиме.
 **Без докера**
 #### 1. Клонировать репозиторий.
 В терминале (командной строке):
@@ -75,6 +74,8 @@ pip install -r ./chat-bot/requirements.txt
 #### 6. Далее нужно подготовить проект к запуску.
 В корневом каталоге chat-bot-backend создать файл `.env` в соответствии с
 шаблоном `.env.example`.
+
+Переименовать файл `_local_settings` в `local_settings` для переопределения некоторых констант.
 
 
 #### 7. Выполнить миграции на уровне проекта из директории `/chat-bot/`:
