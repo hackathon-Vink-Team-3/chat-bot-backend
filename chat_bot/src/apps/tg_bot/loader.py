@@ -21,7 +21,7 @@ state_storage = StateMemoryStorage()
 bot = TeleBot(
     token=settings.BOT_TOKEN,
     parse_mode="HTML",
-    num_threads=10,  # TODO Количество потоков можно будет отрегулировать
+    num_threads=10,  # Количество потоков можно будет отрегулировать
     state_storage=state_storage,
     use_class_middlewares=True,
 )
