@@ -5,7 +5,7 @@ from src.apps.core.models import YaGptSettings
 
 
 @admin.register(YaGptSettings)
-class LMSAdmin(admin.ModelAdmin):
+class YaGptSettingsAdmin(admin.ModelAdmin):
     """Админ панель для настроек модели."""
 
     list_display = (
