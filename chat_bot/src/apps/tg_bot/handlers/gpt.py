@@ -18,7 +18,7 @@ def gpt_answer(
     chat: Chat,
     dialog: Dialog,
 ):
-    """Заглушка."""
+    """Запрос к GPT модели."""
     wait_message = bot.send_message(
         chat_id=message.from_user.id, text="Надо немного подумать...."
     )
