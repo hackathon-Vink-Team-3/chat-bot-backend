@@ -22,7 +22,7 @@ class AuthMiddleware(BaseMiddleware):
         user_exists = CustomUser.objects.filter(
             telegram_id=message.from_user.id
         ).exists()
-        if message.text in ["/start", "/help"]:
+        if message.text in ["/help"]:
             return
         if not user_exists:
             self.registration_gateway(message)
@@ -69,7 +69,9 @@ class AuthMiddleware(BaseMiddleware):
                 self.bot.send_message(
                     chat_id=message.chat.id,
                     text="✅ Вы успешно зарегистрированы\.\n"
-                    f"Ваш временный пароль для входа на сайт: ||{password}||",
+                    f"Ваш временный пароль для входа на сайт:"
+                    f" ||{password}||\.\n\n"
+                    f"Теперь вы можете задать любой интересующий Вас вопрос\.",
                     reply_markup=types.ReplyKeyboardRemove(),
                     parse_mode="MarkdownV2",
                 )
